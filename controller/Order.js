@@ -52,6 +52,8 @@ const changeOrderStatus = catchAsyncErrors(async (req,res,next)=>{
         }
         if(order.status === "Pending"){
             order.status = "Ready"
+        }else if(order.status === "Ready"){
+            return next(new ErrorHandler("Order already ready",400))
         }
         await order.save()
         res.status(200).json({
