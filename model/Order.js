@@ -7,58 +7,41 @@ const orderSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    customer: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    phone: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     orderType: {
       type: String,
-      enum: ["DineIn", "Takeaway", "Delivery"],
-      default: "DineIn",
+      enum: ["dine-in", "takeaway", "delivery"],
       required: true,
     },
-    dateTime: {
-      type: Date,
-      required: true,
-    },
-    paymentMethod: {
-      type: String,
-      enum: ["Cash", "Card", "Online"],
-      required: true,
-    },
-    address: {
-      type: String,
-      default: "",
+    customerDetails: {
+      name: { type: String, required: true },
+      phone: String,
+      address: String,
+      ordertime: String,
+      paymentMethod: {
+        type: String,
+        enum: ["cash", "card", "online"],
+      },
     },
     items: [
       {
-        item: {
-          type: String,
-          required: true,
-        },
-        quantity: {
-          type: Number,
-          required: true,
-          min: 1,
-        },
+        _id: { type: mongoose.Schema.Types.ObjectId, ref: "MenuItem" },
+        name: String,
+        quantity: Number,
+        price: Number,
       },
     ],
-    totalPrice: {
-      type: Number,
-      default: 0,
-    },
+    totalPrice: Number,
     status: {
       type: String,
       enum: ["Pending", "Ready"],
       default: "Pending",
     },
+    platforms:{
+      type:String,
+      default:"IRIS POS"
+    },
   },
+  
   {
     timestamps: true,
   }

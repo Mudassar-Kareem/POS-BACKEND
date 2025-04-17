@@ -14,7 +14,7 @@ exports.isUser = catchAsyncErrors(async(req,res,next)=>{
 })
 
 exports.isAdmin = catchAsyncErrors(async(req,res,next)=>{
-    if(req.user && req.user.role !== "admin"){
+    if(req.user && req.user.role !== "Admin"){
         return next(new ErrorHandler("You are not allowed to access this resource",403))
     }
     next()

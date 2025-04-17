@@ -6,17 +6,14 @@ const orderModel = require("../model/Order")
 const createOrder = catchAsyncErrors(async (req,res,next)=>{
     try {
         const restaurantId = req.user.id;
-        const {customer,phone,orderType,dateTime,paymentMethod,items,address,totalPrice} = req.body;
+        const { orderType, customerDetails, items, totalPrice,platforms } = req.body;
         const order = await orderModel.create({
             restaurantId,
-            customer,
-            phone,
             orderType,
-            dateTime,
-            paymentMethod,
-            address:orderType === "Delivery" ? address : "",
+            customerDetails,
             items,
-            totalPrice
+            totalPrice,
+            platforms
         })
        
         res.status(201).json({

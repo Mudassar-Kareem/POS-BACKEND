@@ -6,17 +6,18 @@ const sendToken = require("../utils/sendToken");
 // create user
 const createUser = catchAsyncErrors(async (req,res,next)=>{
     try {
-        const {name,restaurantName,email,password} = req.body;
+        const {restaurantName,address,type,contactNo,email,name,password,subscriptionType} = req.body;
         const isEmailExist = await userModel.findOne({email});
         if(isEmailExist){
             return next(new ErrorHandler("Email already exist",400))
         }
         const user = await userModel.create({
-            name,
-            restaurantName,
-            email,
-            password
+            restaurantName,address,type,contactNo,email,name,password,subscriptionType
         })
+        if(subscriptionType === "yearly"){
+            user.pkgExpiry = Date.now() + 365 * 24 * 60 * 60 * 1000;
+        }
+        await user.save();
         //send token and save to cookies
         sendToken(user,201,res,"User Created successfully")
     } catch (error) {
@@ -35,6 +36,9 @@ const userLogin = catchAsyncErrors(async(req,res,next)=>{
         const isPasswordValid = await user.comparePassword(password);
         if(!isPasswordValid){
             return next(new ErrorHandler("Wrong Email or Password",400))
+        }
+        if(user.status === "Deactive"){
+            return next(new ErrorHandler("Sorry you can't login, your account is deactivated by admin",400))
         }
         //send token and save to cookies
         sendToken(user,200,res,"User Login successfully")
@@ -72,21 +76,28 @@ const getAllUser = catchAsyncErrors(async (req,res,next)=>{
     }
 })
 
-// delete user --Admin
-const deleteUser = catchAsyncErrors(async(req,res,next)=>{
+// update user status --Admin
+const updateStatus = catchAsyncErrors(async(req,res,next)=>{
     try {
-        const user = await userModel.findByIdAndDelete(req.params.id);
+        const user = await userModel.findById(req.params.id);
         if(!user){
             return next(new ErrorHandler("User not found",404))
         }
+        if(user.status === "Active"){
+            user.status = "Deactive"
+        }else{
+            user.status = "Active"
+        }
+        await user.save();
         res.status(200).json({
             success:true,
-            message:"User deleted successfully"
+            message:"User status updated successfully"
         })
     } catch (error) {
         return next(new ErrorHandler(error.message,500))
     }
 })
+
 
 // update user info
 const updateUser = catchAsyncErrors(async(req,res,next)=>{
@@ -125,4 +136,4 @@ const userLogout = catchAsyncErrors(async(req,res,next)=>{
 })
 
 
-module.exports = {createUser,userLogin,getAllUser,loadUser,deleteUser,updateUser,userLogout}
+module.exports = {createUser,userLogin,getAllUser,loadUser,updateUser,userLogout,updateStatus}

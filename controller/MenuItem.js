@@ -12,13 +12,14 @@ const createMenuItem = catchAsyncErrors(async (req,res,next)=>{
         if(!restaurant){
             return next(new ErrorHandler("Restaurant not found",404))
         }
-        const {name,category,price,image} = req.body;
+        const {name,category,price,image,platforms} = req.body;
         const menuItem = await MenuItem.create({
             name,
             category,
             price,
             image,
-            restaurantId
+            restaurantId,
+            platforms
         })
         res.status(201).json({
             success:true,
@@ -47,7 +48,7 @@ const getAllMenuItem = catchAsyncErrors(async (req,res,next)=>{
 const updateMenuItem = catchAsyncErrors(async(req,res,next)=>{
     try {
         const restaurantId = req.user.id;
-        const {name,category,price,image} = req.body;
+        const {name,category,price,image,platforms} = req.body;
         const menuItem = await MenuItem.findById(req.params.id);
         if(!menuItem){
             return next(new ErrorHandler("Menu Item not found",404))
@@ -59,6 +60,7 @@ const updateMenuItem = catchAsyncErrors(async(req,res,next)=>{
         if(category) menuItem.category = category;
         if(price) menuItem.price = price;
         if(image) menuItem.image = image;
+        if(platforms) menuItem.platforms = platforms;
         await menuItem.save();
         res.status(200).json({
             success:true,

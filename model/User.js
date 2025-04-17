@@ -3,13 +3,26 @@ const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema({
-    name:{
+  restaurantName:{
         type: String,
         required: [true, "Please enter your name!"],
       },
-      restaurantName: { 
+      address: { 
         type: String,
         required: [true, "Please enter your Restaurant name!"],
+      },
+      type: {
+        type: String,
+        required: [true, "Please enter your Restaurant type!"],
+        enum: ["Shop", "Cafe", "FastFood", "FineDining", "Bakery"],
+      },
+      contactNo:{
+        type: String,
+        required: [true, "Please enter your contact number!"],
+      },
+      name:{
+        type: String,
+        required: [true, "Please enter your name!"],
       },
       email: {
         type: String,
@@ -24,7 +37,21 @@ const userSchema = new mongoose.Schema({
       role:{
         type:String,
         default:"user"
-      }
+      },
+      status:{
+        type:String,
+        default:"Active"
+      },
+      subscriptionType: {
+        type: String,
+        required: [true, "Please select a subscription type."],
+        enum: ["monthly", "yearly"],
+        default: "monthly",
+      },
+      pkgExpiry:{
+        type:Date,
+        default:Date.now() + 30* 24 * 60 * 60 * 1000, // 30 days from now
+      },
 });
 
 // hash password

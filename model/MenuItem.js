@@ -22,6 +22,10 @@ const menuItemSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please enter the item image URL!"],
     },
+    platforms:{
+        type: [String],
+        required: [true, "Please enter the platforms!"],
+    }
 },{timestamps:true});
 
 const MenuItem = mongoose.model("MenuItem", menuItemSchema);
