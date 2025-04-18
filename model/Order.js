@@ -16,7 +16,12 @@ const orderSchema = new mongoose.Schema(
       name: { type: String, required: true },
       phone: String,
       address: String,
-      ordertime: String,
+      ordertime: {
+        type:String,
+        default:new Date().toLocaleString("en-US", {
+          timeZone: "Asia/Kolkata",
+        }),
+      },
       paymentMethod: {
         type: String,
         enum: ["cash", "card", "online"],

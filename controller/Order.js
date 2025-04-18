@@ -27,19 +27,33 @@ const createOrder = catchAsyncErrors(async (req,res,next)=>{
 })
 
 // get all orders
-const getAllOrders = catchAsyncErrors(async (req,res,next)=>{
+const getAllOrders = catchAsyncErrors(async (req, res, next) => {
     try {
-        const orders = await orderModel.find({restaurantId:req.user.id})
-        res.status(200).json({
-            success:true,
-            orders,
-            message:"Orders fetched successfully"
-        })
+      let orders = await orderModel.find({ restaurantId: req.user.id });
+  
+      orders.sort((a, b) => {
+        const timeA = a.customerDetails?.ordertime
+          ? new Date(`1970-01-01T${a.customerDetails.ordertime}:00`)
+          : new Date(a.createdAt);
+  
+        const timeB = b.customerDetails?.ordertime
+          ? new Date(`1970-01-01T${b.customerDetails.ordertime}:00`)
+          : new Date(b.createdAt);
+  
+        return timeA - timeB;
+      });
+  
+      res.status(200).json({
+        success: true,
+        orders,
+        message: "Orders fetched successfully",
+      });
     } catch (error) {
-        return next(new ErrorHandler(error.message,500))
+      return next(new ErrorHandler(error.message, 500));
     }
-})
-
+  });
+  
+  
 // change order status
 const changeOrderStatus = catchAsyncErrors(async (req,res,next)=>{
     try {
