@@ -9,7 +9,7 @@ const orderRoute = require("./routes/orderRoute");
 
 const app = express();
 const corsOptions = {
-    origin:["https://pos-psi-sable.vercel.app"], //      "http://localhost:5173"
+    origin:["https://pos-psi-sable.vercel.app","http://localhost:5173"],        
     optionsSuccessStatus: 200, 
     credentials: true,
 };
